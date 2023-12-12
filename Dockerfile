@@ -8,6 +8,4 @@ RUN apt update -qq && apt install -y --no-install-recommends \
 
 COPY . /root
 
-RUN mvn dependency:copy-dependencies
-
 ENTRYPOINT ["mvn", "test"]
