@@ -18,7 +18,7 @@ public class PersonJDBC implements PersonDAO{
 	}
 
 	public void createRelation() throws SQLException {
-		String sql = "CREATE TABLE IF NOT EXISTS person (id_person INTEGER, name TEXT, identity TEXT, birthday TEXT)";
+		String sql = "CREATE TABLE IF NOT EXISTS person (id_person SERIAL PRIMARY KEY, name TEXT, identity TEXT, birthday TEXT)";
 		Statement stmt = this.connection.createStatement();
 		stmt.executeUpdate(sql);
 		stmt.close();
