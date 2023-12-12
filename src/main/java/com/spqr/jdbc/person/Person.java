@@ -1,3 +1,4 @@
+package com.spqr.jdbc.person;
 
 public class Person {
 	
