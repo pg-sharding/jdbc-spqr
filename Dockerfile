@@ -8,7 +8,6 @@ RUN apt update -qq && apt install -y --no-install-recommends \
 
 COPY . /root
 
-RUN mvn dependency:copy-dependencies && \
-    mvn compile && mvn package
+RUN mvn dependency:copy-dependencies
 
-ENTRYPOINT ["java", "-jar", "target/JDBC-SPQR-0.0.1.jar"]
+ENTRYPOINT ["mvn", "test"]
