@@ -1,2 +1,3 @@
-# JDBC-PostgreSQL-SimpleExample
-Very simple example of JDBC with PostgreSQL.
+# SPQR JDBC
+
+Simple tool for testing SPQR compatibility with JDBC.
