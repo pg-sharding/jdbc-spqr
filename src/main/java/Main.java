@@ -4,13 +4,24 @@ import java.util.ArrayList;
 public class Main {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		if (args.length != 5) {
+			System.err.println("Incorrect arguments, please provide host, port, database, user and password");
+			System.exit(1);
+		}
+
+		String host = args[0],
+				port = args[1],
+				db = args[2];
+
 		//you need create database with this name 'github-example-jdbc'
-		String url = "jdbc:postgresql://localhost:5432/github-example-jdbc";
+		String url = String.format("jdbc:postgresql://%s:%s/%s", host, port, db);
 		//user default
-		String user = "postgres";
+		String user = args[3];
 		//your password. root is default
-		String password = "root";
+		String password = args[4];
 		PersonJDBC pjdbc = new PersonJDBC(url, user, password);
+
+		pjdbc.createRelation();
 		
 		Person person = new Person();
 		person.setName("Chloe");
@@ -26,7 +37,7 @@ public class Main {
 					", "+ i.getBirthday());
 		}
 		
-		System.out.println(pjdbc.getPerson("Rafael").getName());
+		System.out.println(pjdbc.getPerson("Chloe").getName());
 		pjdbc.removePerson(person);
 	}
 

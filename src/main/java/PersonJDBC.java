@@ -17,6 +17,13 @@ public class PersonJDBC implements PersonDAO{
 		this.connection = DriverManager.getConnection(url, user, password);
 	}
 
+	public void createRelation() throws SQLException {
+		String sql = "CREATE TABLE IF NOT EXISTS person (id_person INTEGER, name TEXT, identity TEXT, birthday TEXT)";
+		Statement stmt = this.connection.createStatement();
+		stmt.executeUpdate(sql);
+		stmt.close();
+	}
+
 	public void addPerson(Person person) throws SQLException {
 		//query of postgresql
 		String sql = "insert into person(name, identity, birthday)"
