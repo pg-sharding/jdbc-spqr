@@ -6,9 +6,22 @@ import com.spqr.jdbc.person.PersonJDBC;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.assertEquals;
 
 public class JdbcTest {
+    // @Before
+    // public void SetupSharding() throws SQLException, ClassNotFoundException {
+    //     String host = System.getProperty("pgHost"),
+    //            port = System.getProperty("pgPort"),
+    //            user = "spqr-console",
+    //            db = "spqr-console";
+    //     String url = String.format("jdbc:postgresql://%s:%s/%s", host, port, db);
+    //     PersonJDBC pjdbc = new PersonJDBC(url, user, "");
+    //     String query = "CREATE DISTRIBUTION ds1 COLUMN TYPES INTEGER";
+    //     pjdbc.executeSQL(query);
+    // }
+
     @Test
     public void testCRUD() throws SQLException, ClassNotFoundException {
         String host = System.getProperty("pgHost"),
@@ -22,25 +35,26 @@ public class JdbcTest {
         String password = System.getProperty("pgPassword");
         PersonJDBC pjdbc = new PersonJDBC(url, user, password);
 
-        pjdbc.createRelation();
+        // TODO: create relation
 
-        Person person = new Person();
-        person.setName("Chloe");
-        person.setIdentity("ZAA21");
-        person.setBirthday("10/10/1980");
+        // insert into first shard
+        Person person = new Person(1, "Chloe", "ZAA21", "10/10/1980");
         pjdbc.addPerson(person);
 
-        ArrayList<Person> array = pjdbc.getAllPersons();
+        Person dbPerson = pjdbc.getPerson(1);
+        assertEquals(person, dbPerson);
 
-        assertEquals(1, array.size());
-        assertEquals("Chloe", array.get(0).getName());
-        assertEquals("ZAA21", array.get(0).getIdentity());
-        assertEquals("10/10/1980", array.get(0).getBirthday());
+        // insert into second shard
+        Person other = new Person(100, "Jim", "NI4BB", "10/10/1980");
+        pjdbc.addPerson(other);
+
+        dbPerson = pjdbc.getPerson(100);
+        assertEquals(other, dbPerson);
 
         pjdbc.removePerson(person);
 
-        array = pjdbc.getAllPersons();
+        dbPerson = pjdbc.getPerson(1);
 
-        assertEquals(0, array.size());
+        assertEquals(null, dbPerson);
     }
 }

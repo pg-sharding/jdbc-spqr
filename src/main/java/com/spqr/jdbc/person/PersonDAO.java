@@ -14,11 +14,7 @@ public interface PersonDAO {
 	 */
 	public void removePerson(Person person) throws SQLException;
 	/*
-	 * get one person with similar name.
+	 * get one person by their id
 	 */
-	public Person getPerson(String name) throws SQLException;
-	/*
-	 * get all persons
-	 */
-	public ArrayList<Person> getAllPersons() throws SQLException;
+	public Person getPerson(int id) throws SQLException;
 }

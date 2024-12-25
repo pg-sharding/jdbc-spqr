@@ -19,8 +19,14 @@ public class PersonJDBC implements PersonDAO{
 		this.connection = DriverManager.getConnection(url, user, password);
 	}
 
+	public void executeSQL(String query) throws SQLException {
+		Statement stmt = this.connection.createStatement();
+		stmt.executeUpdate(query);
+		stmt.close();
+	}
+
 	public void createRelation() throws SQLException {
-		String sql = "CREATE TABLE IF NOT EXISTS person (id_person SERIAL PRIMARY KEY, name TEXT, identity TEXT, birthday TEXT)";
+		String sql = "CREATE TABLE IF NOT EXISTS person (id INTEGER PRIMARY KEY, name TEXT, identity TEXT, birthday TEXT)";
 		Statement stmt = this.connection.createStatement();
 		stmt.executeUpdate(sql);
 		stmt.close();
@@ -28,68 +34,40 @@ public class PersonJDBC implements PersonDAO{
 
 	public void addPerson(Person person) throws SQLException {
 		//query of postgresql
-		String sql = "insert into person(name, identity, birthday)"
-				+ "values (?,?,?)";
+		String sql = "insert into person(id, name, identity, birthday)"
+				+ "values (?,?,?,?)";
 		
 		PreparedStatement ps = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		
 		
-		// 1 = first '?' 
-		ps.setString(1, person.getName());
-		// 2 - second '?'
-		ps.setString(2, person.getIdentity());
-		// 3 = third '?'
-		ps.setString(3, person.getBirthday());
+		ps.setInt(1, person.getId());
+		ps.setString(2, person.getName());
+		ps.setString(3, person.getIdentity());
+		ps.setString(4, person.getBirthday());
 		
 		//use execute update when the database return nothing
 		ps.executeUpdate();
-		
-		ResultSet generatedKeys =  ps.getGeneratedKeys();
-		if(generatedKeys.next()) {
-			person.setId(generatedKeys.getInt(1));
-		}
-		
-		
 	}
 
 	public void removePerson(Person person) throws SQLException {
-		String sql = "delete from person where id_person = ?";
+		String sql = "delete from person where id = ?";
 		PreparedStatement ps = this.connection.prepareStatement(sql);
 		ps.setInt(1, person.getId());
-		ps.executeUpdate();
-		
-		
+		ps.execute();
 	}
 
-	public Person getPerson(String name) throws SQLException {
-		//get all persons
-		ArrayList<Person> array = getAllPersons();
-		for (Person person : array) {
-			if(person.getName().equals(name)) {
-				return person;
-			}
-		}
-		return null;
-	}
-
-	public ArrayList<Person> getAllPersons() throws SQLException {
-		ArrayList<Person> array = new ArrayList<Person>();
-		
-		//get all persons
-		//query of postgresql
-		ResultSet result = this.connection.prepareStatement("select * from person").executeQuery();
-		while(result.next()) {
-			//new Person
+	public Person getPerson(int id) throws SQLException {
+		PreparedStatement stmt = this.connection.prepareStatement("select * from person where id = ?");
+		stmt.setInt(1, id);
+		ResultSet result = stmt.executeQuery();
+		if (result.next()) {
 			Person person = new Person();
-			//get column of name
 			person.setName(result.getString("name"));
-			person.setId(result.getInt("id_person"));
+			person.setId(result.getInt("id"));
 			person.setIdentity(result.getString("identity"));
 			person.setBirthday(result.getString("birthday"));
-			array.add(person);
+			return person;
 		}
-		result.close();
-		return array;
-		
+		return null;
 	}
 }
