@@ -2,9 +2,11 @@ FROM ubuntu:jammy
 
 WORKDIR /root
 
-RUN apt update -qq && apt install -y --no-install-recommends \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update -qq && apt install -y \
     openjdk-8-jdk maven && \
-    apt remove  -y openjdk-11-jre-headless
+    apt remove -y openjdk-11-jre-headless
 
 COPY . /root
 
