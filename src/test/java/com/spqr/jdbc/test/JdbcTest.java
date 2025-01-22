@@ -36,6 +36,7 @@ public class JdbcTest {
         PersonJDBC pjdbc = new PersonJDBC(url, user, password);
 
         // TODO: create relation
+        pjdbc.createRelation();
 
         // insert into first shard
         Person person = new Person(1, "Chloe", "ZAA21", "10/10/1980");
